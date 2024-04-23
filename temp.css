@@ -1,0 +1,320 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+body {
+    color: rgb(200, 200, 200);
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: #1D1C1C;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    margin: 4px;
+}
+
+.h3 {
+    margin: auto;
+    font-size: x-large;
+    text-align: center;
+}
+
+.h9 {
+    font-size: small;
+}
+
+.h-item {
+    display: none;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sub-content {
+    height: 650px;
+    justify-content: space-between;
+}
+
+.align-right {
+    color: white;
+    width: 100%;
+    display: flex;
+    text-align: right;
+    align-items: center;
+    justify-content: right;
+}
+
+.w-lg {
+    width: 550px;
+}
+
+.w-sm {
+    width: 400px;
+}
+
+.details {
+    border: 1px solid rgb(255, 255, 255, 0.3);
+    padding: 12px 12px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.address-container {
+    flex-direction: row;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.social {
+    cursor: pointer;
+}
+
+#footer {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+#holder {
+    height: 100vh;
+    justify-content: space-between;
+}
+
+#nft-image {
+    width: 350px;
+    border: 1px solid rgb(100, 100, 100);
+    height: 350px;
+    box-shadow: 5px 5px 15px 10px rgba(200, 200, 200, 0.1), -5px -5px 15px 10px rgba(200, 200, 200, 0.1);
+    border-radius: 20px;
+}
+
+#progress {
+    width: 100%;
+    border: 1px solid rgb(100, 100, 100);
+    height: 30px;
+    border-radius: 18px;
+    background-color: #383838;
+}
+
+#progressbar {
+    float: right;
+    width: 50%;
+    height: 100%;
+    border-radius: 18px;
+    background-color: #7a43a7;
+}
+
+@media (max-width: 1000px) {
+    #top-parent {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 600px) {
+    .w-lg {
+        width: 90vw;
+        margin: 12px;
+    }
+
+    .w-sm {
+        width: 90vw;
+    }
+
+    .h9 {
+        font-size: x-small;
+    }
+
+    .sub-content {
+        height: auto;
+    }
+
+    .address-container {
+        flex-direction: column;
+    }
+
+    .details {
+        border: 1px solid rgb(255, 255, 255, 0.3);
+        padding: 6px 12px;
+        border-radius: 20px;
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    #nft-image {
+        width: 85vw;
+        border: 1px solid rgb(100, 100, 100);
+        height: auto;
+        box-shadow: 5px 5px 15px 10px rgba(200, 200, 200, 0.1), -5px -5px 15px 10px rgba(200, 200, 200, 0.1);
+        border-radius: 20px;
+    }
+}
