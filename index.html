@@ -1,636 +1,823 @@
-<body>
-    <header>
-        <link rel="stylesheet" href="temp.css" />
-        <link rel="stylesheet" href="node_modules\bootstrap\dist\css\bootstrap.min.css">
+<!DOCTYPE html>
+<html lang="en">
 
-        <style>
-            body {
-                background: rgb(46, 46, 46)
-            }
-        </style>
-    </header>
-    <div id="holder" class="flex flex-column">
-        <div class="h-item">
-            <button id="btn-getApprovalState" type="button" data-form-name="isApproved">
-                Read
-            </button>
-            <span id="form-output-isApproved-0" data-form-name="isApproved" data-field-type="bool">bool</span>
-            <button id="btn-getSoldState" type="button" data-form-name="isSold">
-                Read
-            </button>
-            <span id="form-output-isSold-0" data-form-name="isSold" data-field-type="bool">bool</span>
-            <button id="btn-getCancelingState" type="button" data-form-name="isCancelled">
-                Read
-            </button>
-            <span id="form-output-isCancelled-0" data-form-name="isCancelled" data-field-type="bool">bool</span>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catalog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+    <style>
+        body {
+            background-color: #e8ecf4;
+        }
+
+        #searchInput {
+            height: 56px;
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .container {
+            padding-top: 20px;
+        }
+
+        .card-img-top {
+            margin-bottom: 20px;
+            border-radius: 15px;
+            /* rounding the top corners to match the card */
+            height: 300px;
+            /* fixed height, you might want to adjust this */
+            object-fit: cover;
+            /* ensures the image covers the area without distortion */
+        }
+
+        .card {
+            padding: 16px;
+        }
+
+        .card-body {
+            padding: 0px;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            /* Removes border */
+        }
+
+        .modal-header,
+        .modal-footer {
+            border-bottom: none;
+            /* Removes footer/header border */
+            border-top: none;
+            padding: 0;
+        }
+
+        .modal-header {
+            margin-bottom: 32px;
+        }
+
+        .modal-header .btn-close {
+            padding: 0;
+            height: 64px;
+            width: 64px;
+            position: relative;
+            top: -32px;
+            right: -32px;
+        }
+
+        .modal-body {
+            overflow: scroll;
+            padding: 32px;
+            position: relative;
+        }
+
+        .modal-footer {
+            position: sticky;
+            background-color: white;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: row;
+            max-height: 640px;
+        }
+
+        .modal-content img {
+            max-width: 50%;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+
+        .modal-tags {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .tag {
+            /* Card */
+            position: static;
+            max-width: 240px;
+            height: 76px;
+            /* Автолейаут */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 16px;
+
+
+            /* Inside Auto Layout */
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+            margin: 0px;
+
+            border: none;
+
+            border-radius: 12px;
+            background: rgb(232, 236, 244);
+        }
+
+        .tag p {
+            margin-bottom: 0;
+        }
+
+        .tag-title {
+            /* Body/Tiny */
+            color: rgb(138, 151, 162);
+            font-family: Inter;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: 0px;
+            text-align: left;
+        }
+
+        .tag-text {
+            /* Body/Small */
+            color: rgb(18, 18, 18);
+            font-family: Inter;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            letter-spacing: 0%;
+            text-align: left;
+        }
+
+
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .modal-subtitle {
+            /* H/S */
+            color: rgb(18, 18, 18);
+            font-family: Montserrat;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 24px;
+            letter-spacing: 0%;
+            text-align: left;
+            margin-bottom: 12px;
+        }
+
+        .modal-dialog {
+            max-width: 800px;
+            /* Larger dialog */
+        }
+
+        .modal-footer {
+            width: 100%;
+        }
+
+        .btn-buy {
+            width: 100%;
+            height: 56px;
+            border-radius: 12px;
+            background: rgb(22, 130, 229);
+        }
+
+        #logInModal .modal-dialog {
+            max-width: 320px;
+        }
+
+        #logInModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+        }
+
+        #logInModal .modal-header {
+            margin-bottom: 24px;
+        }
+
+        #logInModal .modal-body {
+            margin-bottom: 12px;
+        }
+
+        #logInModal .modal-footer {
+            margin-top: 12px;
+        }
+
+        #logInModal .modal-footer>* {
+            margin-top: 0
+        }
+
+        #logInModal #loginInput {
+            height: 56px;
+            /* Автолейаут */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 6px 8px 6px 12px;
+        }
+
+        #logInModal .error {
+            border: 1px solid rgb(213, 73, 28);
+        }
+
+        #logInModal .btn-login {
+            width: 100%;
+            height: 56px;
+            /* Автолейаут */
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 0px;
+
+
+            /* Inside Auto Layout */
+            flex: none;
+            order: 1;
+            align-self: stretch;
+            flex-grow: 0;
+
+            border-radius: 12px;
+            background: rgb(22, 130, 229);
+        }
+
+        #logInModal .btn-login:disabled {
+            width: 100%;
+            height: 56px;
+            /* Автолейаут */
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 0px;
+
+
+            /* Inside Auto Layout */
+            flex: none;
+            order: 1;
+            align-self: stretch;
+            flex-grow: 0;
+
+            border-radius: 12px;
+            background: rgb(232, 236, 244);
+        }
+
+        #logInModal p {
+            margin-top: 4px;
+            /* Body/Tiny */
+            color: rgb(213, 73, 28);
+            font-family: Inter;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: 0px;
+            text-align: left;
+            margin-bottom: 0;
+        }
+
+        #errorModal .modal-dialog {
+            max-width: 320px;
+        }
+
+        #errorModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            padding: 0 32px 32px 32px;
+        }
+
+        #errorModal .modal-header {
+            margin-bottom: 0;
+        }
+
+        #errorModal .btn-close {
+            position: relative;
+            right: -32px;
+            top: 0px;
+        }
+
+        #errorModal .content-body {
+            margin-top: -12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #errorModal .cross-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(244, 87, 37, 0.12);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 16px;
+        }
+
+        #errorModal img {
+            border-radius: 0;
+        }
+
+        #errorModal .modal-title {
+            margin-bottom: 12px;
+        }
+
+        #errorModal .modal-text {
+            margin-bottom: 24px;
+        }
+
+        #errorModal .modal-title,
+        #errorModal .modal-text {
+            text-align: center;
+        }
+
+
+        /* Успех */
+
+        #sussefulModal .modal-dialog {
+            max-width: 320px;
+        }
+
+        #sussefulModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            padding: 0 32px 32px 32px;
+        }
+
+        #sussefulModal .modal-header {
+            margin-bottom: 0;
+        }
+
+        #sussefulModal .btn-close {
+            position: relative;
+            right: -32px;
+            top: 0px;
+        }
+
+        #sussefulModal .content-body {
+            margin-top: -12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #sussefulModal .check-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(74, 201, 155, 0.12);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 16px;
+        }
+
+        #sussefulModal img {
+            border-radius: 0;
+        }
+
+        #sussefulModal .modal-title {
+            margin-bottom: 12px;
+        }
+
+        #sussefulModal .modal-text {
+            margin-bottom: 24px;
+        }
+
+        #sussefulModal .modal-title,
+        #sussefulModal .modal-text {
+            text-align: center;
+        }
+
+        #sussefulModal .btn-home,
+        #errorModal .btn-home {
+            width: 100%;
+            height: 56px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3">
+            <h3>React</h3>
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#logInModal">Войти</button>
+        </header>
+        <h2 class="mb-4">Каталог</h2>
+        <div class="mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Поиск" />
         </div>
-        <div class="flex flex-row w-full mt-4 p-2">
-            <div>
-                <img id="is2i"
-                    src="data:image/png;base64,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"
-                    width="48px" height="48px" />
-            </div>
-            <div class="flex col-10 text-center h3">
-                DUTCH AUCTION
-            </div>
+        <div id="gallery" class="row row-cols-1 row-cols-md-3 g-4">
         </div>
-        <div class="flex flex-column gap-4">
-            <div id="top-parent" class="flex gap-4 m-4">
-                <div class="sub-content details w-sm">
-                    <div class="text-center text-white h6 p-2">NFT Details
+    </div>
+
+    <!-- Modal --><!-- Modal -->
+    <div class="modal fade" id="nftModal" tabindex="-1" aria-labelledby="nftModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <img src="https://via.placeholder.com/500x300" alt="NFT IMAGE">
+                <div class="modal-body">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="nftModalLabel">Название NFT</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="flex">
-                        <img id="nft-image" src="./img.png" />
-                    </div>
-                    <div>
-                        <p id="nft-collection" class="text-center h6 mt-3">NFT
-                        </p>
-                    </div>
-                    <div class="d-flex address-container">
-                        <button id="btn-nft-address" type="button" data-form-name="nft" class="h-item">
-                            NFT address
-                        </button>
-                        <p title="Contract address of the NFT being sold" data-bs-toggle="tooltip"
-                            data-bs-placement="top" class="flex justify-content-start flex-row">Address
-                            <img src="data:image/png;base64,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"
-                                width="14px" height="14px" />:
-                        </p>
-                        <span id="form-output-nft-0" data-form-name="nft" data-field-type="address"
-                            class="align-right h9">address</span>
-                        <script>
-                            setTimeout(() => {
-                                const element = document.getElementById("btn-nft-address");
-                                if (element) {
-                                    element.click();
-                                }
-                            }
-                                , 1000);
-                        </script>
-                    </div>
-                    <div class="d-flex flex-row">
-                        <button id="btn-nft-id" type="button" data-form-name="nftId" class="h-item">
-                            NFT ID
-                        </button>
-                        <p title="Id of the NFT being sold" data-bs-toggle="tooltip" data-bs-placement="top"
-                            class="flex justify-content-start flex-row">ID
-                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsSAAALEgHS3X78AAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAzUSURBVHjadFdtUFPXun53dnb4BsFeZqzeH51WDyAV4ZAgEj4jwZiEZCd7rb2TEEQQC44VtUoSElDAD2w7UHVKka8BywCeU4/T6eccpRBpqTQQAfFai2NLUUdHwHrb6owdXfdHE4d7zpw9s3/tZz3rWe/7vOt9Nzx79oy6ePEi1dTUJJqZmREPDw+LbTYb9fHHH9Ozs7PMiRMnRHV1ddT09PSLbx999BG9uLjItLe3i2pra6nZ2VnG6/WKHQ4HdfbsWXpubo5pb2+nXS4XdfXqVbHX6xU7nU6qs7OTnpmZYXp6euizZ8/Cb7/9RsHs7Cz09vYGVlVVhbS2tkJzc7No7969y44dO8acOXMGXC5XyIEDB8K7urrg5MmTUFZWRu3YsQPy8vIgJycHeJ4HvV4PpaWlsGfPHtGhQ4dEH374IdTX1wft2bMnorW1Fdrb22Hfvn3h9fX1gd3d3dDQ0BDQ0dERMjMzAzA8PEwdPHgwsKioKFipVIqMRqO4uLg4lGXZgPz8fIrjuGCVSiVev349pKenw86dOyOPHDmSu2/fvqLGxsaK3t7evU6ns+jw4cN5O3fujEpOToaEhARQqVQ0xjg0Pz+f1uv1dFFRUajJZArUaDSUxWIJqKurCxoYGKDB4/FIampqRBaLBbRa7Ussy4aZzWbAGAcnJydHlZaWQltbGxw9ejR/enr6wtOnT/+X/Ifn999/f3Tz5s3PnU6noaGhAWprayExMTFCq9VGWiwWQAgxarU6GmMsqa6uhsHBQQa8Xq/IbrczGOMAg8EgQQgFcBwXqFQqRdnZ2XDu3Lm/EkKuLt3oyZMnzycnJ//n22+/HZyamnL/8MMP1x8/fvz8X/RM9PX1/VUulwPHcbTBYAjgOE5iMBgkPM8HVFZWSgYHB2kYGxsDu90eyvN8JMuyUFBQIElNTQ0qKyuDu3fv7lrKODs7+01LS8sOvV6/4rXXXgOZTAa5ubmQmJgIGo1meWtr67Y7d+589y9RebO2thaSkpJCtm7dGqbX68FkMgVXVlZGXrx4kQKfQ0UYYxHP82EbNmwQaTQaePDgwUk/yeLi4kx/f79Cp9NBXFwc5OTkgE6no3iep1iWBZ1ORykUCli7di3k5+dDW1vbpp9//vnGEuEnExISQCqVgslkCud5XuJwOGBoaIiG8fFxxuVyiUwmE2UwGCJWrVoFzc3Nby5Z/I+KigpYv3495ObmigVBALPZHMhx3Ev5+fk0y7KAMV7G83y4IAigVqthzZo1sHXrVrh3797f/TxNTU1vvvzyy8DzfCTP84zD4YBLly6J4bvvvgO73R6MMQ7PzMyE48ePp/oXTU5OnlUqlbBx40YwGAzA8zyNEFrOsmwgxhhUKhVkZ2eDWq0GQRDECKHlCKEgnuchMzMTFAoFTE1NvRBx5syZDI1GA0ajMaiysjJiYGCAgvHxcXA4HEFqtVq0efNmePDgwSVCCHn48OF0UlISJCUlgcViCccYUwghMc/z4SkpKbB79+6w+fn5wVu3bnnLy8sjlUolIITCEUJBCCEwm83BMpkMUlNT4eHDh1cJIeTu3btDWVlZoNVqwW63hwwMDIjgypUrTE1NjWjDhg1QX1+P/GrffvvtTTExMVBYWMhwHAe+04UjhCA5ORm6u7sr/diOjo5KmUwGCCFACAUghKI5jhMXFBRAXFwcvPPOOxo/tr6+HsvlcnA4HOB2uxkYGxuj7XY7lZWVBR6P55wv719yHAdqtRoQQhLfG4AQCsAYS1JSUqCsrGyDn9Rms2VmZWUtxQb68BKNRgM6nQ5u3759gRBCRkZGzsnlcjhw4ADldrtpGB0dhb1790J5efnKX3/9dcFnmNK4uDgwmUyAEIrwnR4QQjTGOFqr1Qbl5eUBxjgoJSUlRC6Xg9VqpRFC0QihYB82DCEULQiCaN26ddDS0lJMCCG3b9++z3FcpN1uh88//5yCyclJMcYYDh06lEMIIc+ePSN6vX5VTk4OYIxDEUJihJAIIRTiyy+FEBKzLBtot9vzTpw4kVlYWMjodLpA3zeJb3MGISTCGIdkZGRASUnJKn/ECgsLM7Zs2QLDw8NiuHnzJpOcnAzl5eUWQgiZmZm5uXr1atBoNMDz/Eu+zQEhFIkQCuN53t8T4v2EZrN5XWpqKgiC8MIDPgGAMV6m1WqZ9evXw9zc3DVCCNm+fXvhq6++ChMTE2IYHx8HhBB0dXVVEELI+Pj4UGZmJnAc59841JcGQAjRWq02Uq/Xw9zc3Bq/gPv378cVFxeDUqmM8leBL2KRCCHKYDCAQqGAGzduuAkhpKGhoRxjDF9++SUFExMTsGXLFnj//fd3E0LI6OjoV0lJScBxHL2EKHyJgGV6vR5u3br1lyX3RYzVagWVShXhMyD4vBDhF5CRkQHXr193E0LI4cOHy7RaLbjdbgpu3LghyczMhKqqKjMhhHz//fc3VqxY4b9copekIAohFC4IAkilUiguLs5akoKM+Ph48HU8ydIU8DwfqVarmdjY2BcpcDqdW2UyGYyNjYlhcnKStlgscPDgQQUhhPzxxx9k06ZNK7Ozs4Hn+WAfodgX2kCj0SjOzs6G7u7uJL+A1tbWpLy8PGBZVuyLQJBPAIMxDpLL5VBUVPTffvz+/fuzeJ4Ht9tNw+XLl2HXrl1QVla24vHjx/OEENLY2Lg9JiYGzGbzv5WhWq2ORgjBgwcPVvsJnz59umbXrl2gUCiWlmEoQuglQRCohIQEaGlpKfWXoU6ni3zrrbfgwoULFHg8Htpms8HGjRvh8uXL//CB/mk2m0GtVtO+k4h9Xgg0Go2irKws6O7ulvoFtLS0JGdnZ4PRaKR9EQvxraM1Gg3Fsizcvn37IiGEfPPNN+fS0tLAZrOB2+0Ww5UrVxiXy0XHx8dDTU0N9pM2NjbmxsbGQmFhocR3FUchhMIxxpCeng47dux40bTKy8vXpaWlAcbY74H/QggxVqsVYmJioLGxUeXHOp1OJJfLoaqq6s9uODY2Bg6HI4hlWVqj0cC9e/cu+WaAq/Hx8fD666+DxWKJ8JHTCKEojuMYnU4H7733XunJkyffYFkWjEYjIISW+avAbDaHSKVSkEqlsLi4OOW74i/J5XLQ6/Vgs9lCBwYGqBcCMMZhOTk5cOrUqXS/2itXrvxt8+bNkJ6eDkajkcIYixFCUTzPBxqNRpDJZCCTySiO4/ytehlCKBBjDHK5HJRKJUxOTv59SVTTFQoF8DwfZLPZwgYGBkTg9XoZl8slEgQBDAbDsldeeQU++OCDFwPJ/Pz8ObvdDrGxsaBQKMSCIIAgCIEmkyna5w3geT5SEIRwQRBg8+bNsHr1anjjjTdgfn7+b0sHkpUrV4IgCFE8z0vsdvufHvB4PLTT6aR5nhdjjEM2btwI2dnZ8NNPP53wL15YWLj52Wef5RYXF0NsbCykpaWBUqmkjEYjpdfrITc3F1JTU2Ht2rWAMYb+/n7F/fv3Z5ZMVacSExNBLpcDz/MhGGNJZWWlaGho6M9uaLfbwwRBiGRZFqxWq0QqlQaVlJTA7Ozs/xtKFxYWvu7s7Nyh1WqjExISIC0tDViWhYyMDNDr9RGnT5/etrCw4PHjnz9/Tu7evfvm8ePHITU1NaSgoCCMZVkQBCG4srIycmBggAKv10s7nU4xxphhWTbIl0NGrVZTMpkMzp8//29jOSHk+b17965fu3bt4o8//ji0uLj4AyHkxVj+7NkzQgiZ6ujoWJeYmAharVZsNBolCCGJwWAI4nleYrPZxIODgzR4PB6murpaJAgCqFSq5Xq9PtRkMgHLssEymSyqoqIC3n33XaiurmbHxsb++csvv/z6n35MFhYWHo2Pj39hs9lYl8sF+/fvB6lUGq5WqyPNZjNwHMeoVKpojuMkDocDvvrqKwY8Hg8cPHgwyGq1hnIcRwmCIDaZTBEmkymgoKAAtFptiFKpZGQyGaSlpYHVal3ucDhytm3bZnU6nXtPnz79VkVFRWF1dbWypKQkWiaT+QdSsVarDbdarSJBEGiLxRJuNpuDEEJgsVgCa2trQz/55BMa5ubmoKenJ7CioiKkra0Nmpqa6KKiomVHjhxhent7Yffu3cFWqzWsq6sLGhsbwWAwUNu3bweDwQCZmZmwZcsWQAhBaWkpbNu2jaqpqRH19fXBgQMHAsvLy8O7u7uhra0NioqKwquqqgL6+/vh2LFjAW1tbSETExMAT548oT799FOqqalJNDo6Kvniiy+Yuro6OH/+PD05OSlpbm4WnTp1ivJ6vZKvv/6aaWhogL6+PvGdO3ckPT09oqNHj1LT09OSkZERpra2Fnp7e+lr165JOjs76aqqKmpoaIgZGRlh6urqqK6uLnpqakrS3t5Od3Z2wqNHj6j/GwBmaxF0LVsGkgAAAABJRU5ErkJggg=="
-                                width="14px" height="14px" />:
-                        </p>
-                        <span id="form-output-nftId-0" data-form-name="nftId" data-field-type="uint256"
-                            class="align-right">uint256</span>
-                        <script>
-                            setTimeout(() => {
-                                const element = document.getElementById("btn-nft-id");
-                                if (element) {
-                                    element.click();
-                                }
-                            }
-                                , 1000);
-                        </script>
-                    </div>
-                    <div class="d-flex address-container">
-                        <button id="btn-nft-seller" type="button" data-form-name="seller" class="h-item">
-                            NFT seller
-                        </button>
-                        <p title="Wallet address of the NFT seller" data-bs-toggle="tooltip" data-bs-placement="top"
-                            class="flex justify-content-start flex-row">Seller
-                            <img src="data:image/png;base64,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"
-                                width="14px" height="14px" />:
-                        </p>
-                        <span id="form-output-seller-0" data-form-name="seller" data-field-type="address"
-                            class="align-right h9">address</span>
-                        <script>
-                            setTimeout(() => {
-                                const element = document.getElementById("btn-nft-seller");
-                                if (element) {
-                                    element.click();
-                                }
-                            }
-                                , 1000);
-                        </script>
-                    </div>
-                    <div class="d-flex flex-row">
-                        <p title="Id of chain where this Dutch Auction and NFT is deployed on" data-bs-toggle="tooltip"
-                            data-bs-placement="top" class="flex flex-row">ChainID
-                            <img src="data:image/png;base64,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"
-                                width="14px" height="14px" />:
-                        </p>
-                        <span id="chain-id" class="align-right">chain name</span>
-                    </div>
-                </div>
-                <div class="sub-content flex flex-column">
-                    <div class="details w-lg gap-2">
-                        <div class="text-center text-white h6 p-2">Buy Details
-                        </div>
-                        <div class="d-flex flex-row">
-                            <p title="Crypto currency that is accepted for the purchase of this NFT. Stable coin (USDT, USDC, DAI, etc) or native network coin (ETH, MATIC, BNB, etc)."
-                                data-bs-toggle="tooltip" data-bs-placement="top" class="flex flex-row">Type
-                                <img src="data:image/png;base64,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"
-                                    width="14px" height="14px" />:
-                            </p>
-                            <span id="coin-symbol" class="align-right">ETH</span>
-                        </div>
-                        <div class="d-flex flex-row gap-2">
-                            <button id="btn-price" type="button" data-form-name="getPrice" class="h-item">
-                                Get current price
-                            </button>
-                            <p title="Amount of crypto currency needed to buy this NFT" data-bs-toggle="tooltip"
-                                data-bs-placement="top" class="flex flex-row">Price
-                                <img src="data:image/png;base64,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"
-                                    width="14px" height="14px" />:
-                            </p>
-                            <span id="form-output-getPrice-0" data-form-name="getPrice" data-field-type="uint256"
-                                class="h-item">uint256</span>
-                            <span id="current-price" class="align-right h3">uint256</span>
-                        </div>
-                        <div class="h-item">
-                            <button id="btn-coin-address" type="button" data-form-name="coin">
-                                Coin address
-                            </button>
-                            <p>Address:
-                            </p>
-                            <span id="form-output-coin-0" data-form-name="coin" data-field-type="address">address</span>
-                            <script>
-                                setTimeout(() => {
-                                    const element = document.getElementById("btn-coin-address");
-                                    if (element) {
-                                        element.click();
-                                    }
-                                }
-                                    , 1000);
-                            </script>
-                        </div>
-                        <div id="btn-group" class="d-flex flex-column gap-2">
-                        </div>
-                    </div>
-                    <div class="details w-lg">
-                        <div class="text-center text-white h6 p-2">Auction Contract Details
-                        </div>
-                        <div class="d-flex address-container">
-                            <button id="btn-auction-address" type="button" data-form-name="getAddress" class="h-item">
-                                Get Auction Contract address
-                            </button>
-                            <p title="Contract address of this Dutch Auction" data-bs-toggle="tooltip"
-                                data-bs-placement="top" class="flex justify-content-start flex-row">Address
-                                <img src="data:image/png;base64,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"
-                                    width="14px" height="14px" />:
-                            </p>
-                            <span id="form-output-getAddress-0" data-form-name="getAddress" data-field-type="address"
-                                class="align-right h9">address</span>
-                            <script>
-                                setTimeout(() => {
-                                    const element = document.getElementById("btn-auction-address");
-                                    if (element) {
-                                        element.click();
-                                    }
-                                }
-                                    , 1000);
-                            </script>
-                        </div>
-                        <div class="d-flex flex-row gap-2">
-                            <button id="btn-duration" type="button" data-form-name="duration" class="h-item">
-                                Auction Duration
-                            </button>
-                            <p title="Total duration that this auction will be active for" data-bs-toggle="tooltip"
-                                data-bs-placement="top" class="flex flex-row">Duration
-                                <img src="data:image/png;base64,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"
-                                    width="14px" height="14px" />:
-                            </p>
-                            <span id="form-output-duration-0" data-form-name="duration" data-field-type="uint256"
-                                class="align-right">uint256</span>
-                            <script>
-                                setTimeout(() => {
-                                    const element = document.getElementById("btn-duration");
-                                    if (element) {
-                                        element.click();
-                                    }
-                                }
-                                    , 1000);
-                            </script>
-                        </div>
-                        <div id="progress" class="progress">
-                            <div id="progressbar" role="progressbar" aria-valuemax="100" aria-valuemin="0"
-                                aria-valuenow="5" class="progress-bar progress-bar-striped progress-bar-animated">
+                    <div class="content-body">
+                        <div class="modal-item mb-3">
+                            <div class="modal-subtitle">
+                                NFT
+                            </div>
+                            <div class="modal-tags">
+                                <div class="tag">
+                                    <p class="tag-title">Address</p>
+                                    <p class="tag-text">address</p>
+                                </div>
+                                <div class="tag">
+                                    <p class="tag-title">ID</p>
+                                    <p class="tag-text">unit1234</p>
+                                </div>
+                                <div class="tag">
+                                    <p class="tag-title">Seller</p>
+                                    <p class="tag-text">address</p>
+                                </div>
+                                <div class="tag">
+                                    <p class="tag-title">ChainID</p>
+                                    <p class="tag-text">chain name</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex flex-row justify-content-center text-center gap-2">
-                            <button id="btn-progress" type="button" data-form-name="getRemainingTime" class="h-item">
-                                Get duration progress
-                            </button>
-                            <p>Remaining Time:
+
+                        <div class="modal-item mb-3">
+                            <div class="modal-subtitle">
+                                Buy details
+                            </div>
+                            <div class="modal-tags">
+                                <div class="tag">
+                                    <p class="tag-title">Type</p>
+                                    <p class="tag-text">ETH</p>
+                                </div>
+                                <div class="tag">
+                                    <p class="tag-title">Price</p>
+                                    <p class="tag-text">unit1234</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-item mb-3">
+                            <div class="modal-subtitle">
+                                Buy details
+                            </div>
+                            <p>
+                                Название NFT Lorem ipsum dolor sit amet, consectetur adipiscing
+                                elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                                aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                                laboris nisi ut aliquip ex ea commodo consequat.
                             </p>
-                            <span id="form-output-getRemainingTime-0" data-form-name="getRemainingTime"
-                                data-field-type="uint256" class="h-item">uint256</span>
-                            <span id="remaining-time" class="flex text-white">uint256</span>
                         </div>
+
+
                     </div>
-                    <div class="details w-lg">
-                        <div class="text-center text-white h6 p-2">Auction Description
-                        </div>
-                        <div class="pb-2 text-center">
-                            This contract implements a Dutch auction for an ERC721 token. The auction starts with a
-                            specified price and decreases over time based on a discount rate. Bidders can buy the token
-                            by sending enough Native(Eth, BNB, MATIC)/Stable currency(USDT, USDC, ...) before the
-                            auction expires.
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-buy">Купить</button>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div id="footer" class="flex address-container w-full gap-2 p-2">
-            <div class="text-center w-full">
-                Copyright @2024 Forward Factory
-            </div>
-            <div class="flex flex-row w-full justify-content-end gap-2">
-                <a onclick="window.open('https://forwardprotocol.io/')" class="social"><svg fill="none" width="32"
-                        xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 32 32">
-                        <path
-                            d="M24.0096 0C25.1055 0 26.1378 0.210275 27.1063 0.630824C28.0749 1.05137 28.9223 1.62485 29.6487 2.35125C30.3751 3.07766 30.9486 3.92513 31.3692 4.89367C31.7897 5.86221 32 6.89446 32 7.99044V23.9713C32 25.0673 31.7897 26.1059 31.3692 27.0872C30.9486 28.0685 30.3751 28.9223 29.6487 29.6487C28.9223 30.3751 28.0749 30.9486 27.1063 31.3692C26.1378 31.7897 25.1055 32 24.0096 32H7.99044C6.89446 32 5.86221 31.7897 4.89367 31.3692C3.92513 30.9486 3.07766 30.3751 2.35125 29.6487C1.62485 28.9223 1.05137 28.0685 0.630824 27.0872C0.210275 26.1059 0 25.0673 0 23.9713V7.99044C0 6.89446 0.210275 5.86221 0.630824 4.89367C1.05137 3.92513 1.62485 3.07766 2.35125 2.35125C3.07766 1.62485 3.92513 1.05137 4.89367 0.630824C5.86221 0.210275 6.89446 0 7.99044 0H24.0096ZM11.0108 12.0048H6.99642V25.0036H11.0108V12.0048ZM9.0227 10.9725C9.55794 10.9725 10.0231 10.7814 10.4182 10.399C10.8132 10.0167 11.0108 9.5452 11.0108 8.98447C11.0108 8.42374 10.8132 7.95221 10.4182 7.56989C10.0231 7.18757 9.55794 6.99642 9.0227 6.99642C8.46197 6.99642 7.98407 7.18757 7.58901 7.56989C7.19395 7.95221 6.99642 8.42374 6.99642 8.98447C6.99642 9.5452 7.19395 10.0167 7.58901 10.399C7.98407 10.7814 8.46197 10.9725 9.0227 10.9725ZM25.0036 17.4719C25.0036 16.5544 24.7487 15.6559 24.2389 14.7766C23.7292 13.8973 23.0665 13.2282 22.2509 12.7694C21.5117 12.3616 20.6515 12.145 19.6702 12.1195C18.689 12.094 17.8033 12.2597 17.0131 12.6165V12.0048H12.9988V25.0036H17.0131V17.0514L18.6571 16.2485C18.861 16.1466 19.1414 16.0956 19.4982 16.0956C19.855 16.0956 20.1227 16.1593 20.3011 16.2867C20.454 16.3632 20.6069 16.5289 20.7599 16.7838C20.9128 17.0386 20.9892 17.268 20.9892 17.4719V25.0036H25.0036V17.4719Z"
-                            fill="white">
-                        </path>
-                    </svg></a>
-                <a onclick="window.open('https://forwardprotocol.io/')" class="social"><svg fill="none" width="32"
-                        xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 32 32">
-                        <path
-                            d="M24.0096 0C25.1055 0 26.1378 0.210275 27.1063 0.630824C28.0749 1.05137 28.9223 1.62485 29.6487 2.35125C30.3751 3.07766 30.9486 3.92513 31.3692 4.89367C31.7897 5.86221 32 6.89446 32 7.99044V23.9713C32 25.0673 31.7897 26.1059 31.3692 27.0872C30.9486 28.0685 30.3751 28.9223 29.6487 29.6487C28.9223 30.3751 28.0749 30.9486 27.1063 31.3692C26.1378 31.7897 25.1055 32 24.0096 32H7.99044C6.89446 32 5.86221 31.7897 4.89367 31.3692C3.92513 30.9486 3.07766 30.3751 2.35125 29.6487C1.62485 28.9223 1.05137 28.0685 0.630824 27.0872C0.210275 26.1059 0 25.0673 0 23.9713V7.99044C0 6.89446 0.210275 5.86221 0.630824 4.89367C1.05137 3.92513 1.62485 3.07766 2.35125 2.35125C3.07766 1.62485 3.92513 1.05137 4.89367 0.630824C5.86221 0.210275 6.89446 0 7.99044 0H24.0096ZM23.6272 12.043C24.3664 11.5333 25.0163 10.8706 25.5771 10.055C25.2202 10.2079 24.857 10.3353 24.4875 10.4373C24.1179 10.5392 23.7419 10.6157 23.3596 10.6667C24.2007 10.1314 24.7614 9.40502 25.0418 8.48746C24.2772 8.97172 23.4616 9.29032 22.595 9.44325C21.8303 8.62764 20.8746 8.21983 19.7276 8.21983C19.1924 8.21983 18.689 8.32178 18.2174 8.52569C17.7459 8.72959 17.3381 9.00996 16.994 9.36679C16.6499 9.72362 16.3759 10.1378 16.172 10.6093C15.9681 11.0808 15.8662 11.5842 15.8662 12.1195C15.8662 12.2724 15.8726 12.419 15.8853 12.5591C15.898 12.6993 15.9172 12.8459 15.9427 12.9988C14.3369 12.9223 12.8459 12.5209 11.4695 11.7945C10.0932 11.0681 8.92075 10.1187 7.95221 8.94624C7.59538 9.53246 7.41697 10.1824 7.41697 10.8961C7.41697 11.5587 7.57626 12.1704 7.89486 12.7312C8.21346 13.2919 8.62764 13.7507 9.13739 14.1075C8.83154 14.1075 8.53206 14.0629 8.23895 13.9737C7.94584 13.8845 7.6591 13.7762 7.37873 13.6487V13.687C7.37873 14.63 7.67822 15.452 8.27718 16.1529C8.87614 16.8538 9.62166 17.3063 10.5137 17.5102C10.1569 17.5866 9.81282 17.6248 9.48148 17.6248H9.11828L8.75508 17.5484C9.00996 18.3385 9.46237 18.9821 10.1123 19.4791C10.7622 19.9761 11.5205 20.2374 12.3871 20.2628C11.7244 20.7726 10.9789 21.1804 10.1505 21.4863C9.32218 21.7921 8.46197 21.945 7.56989 21.945C7.39148 21.945 7.22581 21.9387 7.07288 21.9259C6.91995 21.9132 6.76702 21.8941 6.6141 21.8686C7.48068 22.4293 8.41736 22.8626 9.42413 23.1685C10.4309 23.4743 11.4823 23.6272 12.5783 23.6272C14.3624 23.6272 15.9427 23.2895 17.319 22.6141C18.6953 21.9387 19.8487 21.0721 20.779 20.0143C21.7093 18.9566 22.4166 17.7714 22.9008 16.4588C23.3851 15.1462 23.6272 13.8399 23.6272 12.54V12.043Z"
-                            fill="white">
-                        </path>
-                    </svg></a>
-                <a onclick="window.open('https://forwardprotocol.io/')" class="social"><svg width="32"
-                        xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 32 32">
-                        <path
-                            d="M24.0096 0C25.1055 0 26.1378 0.210275 27.1063 0.630824C28.0749 1.05137 28.9223 1.62485 29.6487 2.35125C30.3751 3.07766 30.9486 3.92513 31.3692 4.89367C31.7897 5.86221 32 6.89446 32 7.99044V23.9713C32 25.0673 31.7897 26.1059 31.3692 27.0872C30.9486 28.0685 30.3751 28.9223 29.6487 29.6487C28.9223 30.3751 28.0749 30.9486 27.1063 31.3692C26.1378 31.7897 25.1055 32 24.0096 32H7.99044C6.89446 32 5.86221 31.7897 4.89367 31.3692C3.92513 30.9486 3.07766 30.3751 2.35125 29.6487C1.62485 28.9223 1.05137 28.0685 0.630824 27.0872C0.210275 26.1059 0 25.0673 0 23.9713V7.99044C0 6.89446 0.210275 5.86221 0.630824 4.89367C1.05137 3.92513 1.62485 3.07766 2.35125 2.35125C3.07766 1.62485 3.92513 1.05137 4.89367 0.630824C5.86221 0.210275 6.89446 0 7.99044 0H24.0096ZM21.9833 6.99642H18.6189C17.9562 6.99642 17.3445 7.11111 16.7838 7.3405C16.223 7.56989 15.7387 7.86937 15.3309 8.23895C14.9231 8.60852 14.5982 9.03544 14.356 9.51971C14.1139 10.004 13.9928 10.4883 13.9928 10.9725V12.9988H11.0108V16.9749H13.9928V25.0036H18.0072V16.9749H20.9892V12.9988H18.0072V12.0048C18.0072 11.6734 18.1282 11.4186 18.3704 11.2401C18.6125 11.0617 18.8228 10.9725 19.0012 10.9725H21.9833V6.99642Z"
-                            fill="white">
-                        </path>
-                    </svg></a>
-                <a onclick="window.open('https://forwardprotocol.io/')" class="social"><svg fill="none" width="32"
-                        xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 32 32">
-                        <path
-                            d="M21.4098 16.0191C21.4098 15.5858 21.3461 15.1143 21.2186 14.6045H22.8244V22.3274C22.8244 22.5313 22.7543 22.6969 22.6141 22.8244C22.4739 22.9518 22.3019 23.0155 22.098 23.0155H9.51971C9.31581 23.0155 9.15014 22.9518 9.0227 22.8244C8.89526 22.6969 8.83154 22.5313 8.83154 22.3274V14.6045H10.399C10.2716 15.1143 10.2079 15.5858 10.2079 16.0191C10.2079 16.7838 10.3544 17.5102 10.6476 18.1983C10.9407 18.8865 11.3421 19.4791 11.8519 19.9761C12.3616 20.4731 12.9606 20.8682 13.6487 21.1613C14.3369 21.4544 15.0633 21.601 15.828 21.601C16.5926 21.601 17.319 21.4544 18.0072 21.1613C18.6953 20.8682 19.2879 20.4731 19.7849 19.9761C20.282 19.4791 20.677 18.8865 20.9701 18.1983C21.2632 17.5102 21.4098 16.7838 21.4098 16.0191ZM15.828 19.4982C15.3437 19.4982 14.8849 19.409 14.4516 19.2306C14.0183 19.0522 13.6424 18.8037 13.3238 18.4851C13.0052 18.1665 12.7567 17.7969 12.5783 17.3763C12.3998 16.9558 12.3106 16.5034 12.3106 16.0191C12.3106 15.5348 12.3998 15.0761 12.5783 14.6428C12.7567 14.2095 13.0052 13.8335 13.3238 13.5149C13.6424 13.1963 14.0183 12.9478 14.4516 12.7694C14.8849 12.591 15.3437 12.5018 15.828 12.5018C16.3122 12.5018 16.7646 12.591 17.1852 12.7694C17.6057 12.9478 17.9753 13.1963 18.2939 13.5149C18.6125 13.8335 18.861 14.2095 19.0394 14.6428C19.2178 15.0761 19.307 15.5348 19.307 16.0191C19.307 16.5034 19.2178 16.9558 19.0394 17.3763C18.861 17.7969 18.6125 18.1665 18.2939 18.4851C17.9753 18.8037 17.6057 19.0522 17.1852 19.2306C16.7646 19.409 16.3122 19.4982 15.828 19.4982ZM22.098 9.0227C22.3019 9.0227 22.4739 9.08642 22.6141 9.21386C22.7543 9.3413 22.8244 9.50697 22.8244 9.71087V11.8136C22.8244 12.0175 22.7543 12.1832 22.6141 12.3106C22.4739 12.4381 22.3019 12.5018 22.098 12.5018H19.9952C19.7913 12.5018 19.6256 12.4381 19.4982 12.3106C19.3708 12.1832 19.307 12.0175 19.307 11.8136V9.71087C19.307 9.50697 19.3708 9.3413 19.4982 9.21386C19.6256 9.08642 19.7913 9.0227 19.9952 9.0227H22.098ZM23.9713 0C25.0673 0 26.1059 0.210275 27.0872 0.630824C28.0685 1.05137 28.9223 1.62485 29.6487 2.35125C30.3751 3.07766 30.9486 3.92513 31.3692 4.89367C31.7897 5.86221 32 6.89446 32 7.99044V23.9713C32 25.0673 31.7897 26.1059 31.3692 27.0872C30.9486 28.0685 30.3751 28.9223 29.6487 29.6487C28.9223 30.3751 28.0685 30.9486 27.0872 31.3692C26.1059 31.7897 25.0673 32 23.9713 32H7.99044C6.89446 32 5.86221 31.7897 4.89367 31.3692C3.92513 30.9486 3.07766 30.3751 2.35125 29.6487C1.62485 28.9223 1.05137 28.0685 0.630824 27.0872C0.210275 26.1059 0 25.0673 0 23.9713V7.99044C0 6.89446 0.210275 5.86221 0.630824 4.89367C1.05137 3.92513 1.62485 3.07766 2.35125 2.35125C3.07766 1.62485 3.92513 1.05137 4.89367 0.630824C5.86221 0.210275 6.89446 0 7.99044 0H23.9713ZM24.9271 9.0227C24.9271 8.43648 24.7232 7.93947 24.3154 7.53166C23.9076 7.12385 23.4106 6.91995 22.8244 6.91995H8.83154C8.24532 6.91995 7.74831 7.12385 7.3405 7.53166C6.9327 7.93947 6.72879 8.43648 6.72879 9.0227V23.0155C6.72879 23.6018 6.9327 24.0988 7.3405 24.5066C7.74831 24.9144 8.24532 25.1183 8.83154 25.1183H22.8244C23.4106 25.1183 23.9076 24.9144 24.3154 24.5066C24.7232 24.0988 24.9271 23.6018 24.9271 23.0155V9.0227Z"
-                            fill="white">
-                        </path>
-                    </svg></a>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="logInModal" tabindex="-1" aria-labelledby="logInModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logInModalLabel">Авторизация</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="content-body">
+                    <input type="text" id="loginInput" class="form-control" placeholder="Номер кошелька" />
+                    <p class="input-error" style="display: none;"></p>
+                </div>
+                <div class="modal-footer">
+                    <button disabled type="button" class="btn btn-primary btn-login">Войти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--  КНОПКИ ДЛЯ ОТРАБАТЫВАНИЯ МОДАЛЬНЫХ ОКОН -->
+
+    <div class="invisible-buttons" style="display: none;">
+        <button class="btn-error" data-bs-toggle="modal" data-bs-target="#errorModal"></button>
+        <button class="btn-susseful" data-bs-toggle="modal" data-bs-target="#sussefulModal"></button>
+    </div>
+
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="content-body">
+                    <div class="cross-wrapper">
+                        <i class="fas fa-times" style="font-size: 20px; color: rgb(244, 87, 37)"></i>
+                    </div>
+                    <div>
+                        <p class="modal-title">Ошибка</p>
+                        <p class="modal-text">При покупке возникла техническая ошибка. Чтобы ее исправить, обратитесь
+                            в поддержку вашего кошелька</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-home">На главную</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sussefulModal" tabindex="-1" aria-labelledby="sussefulModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="content-body">
+                    <div class="check-wrapper">
+                        <i class="fas fa-check" style="font-size: 20px; color: rgb(74, 201, 155)"></i>
+                    </div>
+                    <div>
+                        <p class="modal-title">Успех</p>
+                        <p class="modal-text">Покупка прошла успешно. На кошелек начисляются бонусы</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-home">На главную</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        //abi
-        const abi = [
-            {
-                "constant": true,
-                "inputs": [],
-                "name": "name",
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "string"
-                    }
-                ],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
+
+        // Успех и неудача покупки (клик для открытия соответсвующей модалки)
+        const btnSusseful = document.querySelector(".btn-susseful");
+        const btnError = document.querySelector(".btn-error");
+
+    </script>
+    <script>
+        const contractAddress = 'YOUR_CONTRACT_ADDRESS';
+        const abi = [/* ABI вашего контракта */];
+
+        window.addEventListener('load', function () {
+            if (typeof window.ethereum !== 'undefined') {
+                const web3 = new Web3(window.ethereum);
+                const marketplace = new web3.eth.Contract(abi, contractAddress);
+                loadProducts(marketplace);
+            } else {
+                console.log('Необходимо установить MetaMask!');
+                loadDemoProducts();
             }
-            ,
-            {
-                "inputs": [],
-                "name": "symbol",
-                "outputs": [
-                    {
-                        "internalType": "string",
-                        "name": "",
-                        "type": "string"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
+        });
+
+        async function loadProducts (marketplace) {
+            const productCount = await marketplace.methods.products.length().call();
+            const container = document.getElementById('product-container');
+            container.innerHTML = ''; // Очистить контейнер
+
+            for (let i = 0; i < productCount; i++) {
+                const product = await marketplace.methods.products(i).call();
+                const html = `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text">${product.price} ETH</p>
+                                <button class="btn btn-primary" onclick="buyProduct(${i})">Купить</button>
+                            </div>
+                        </div>
+                    </div>`;
+                container.innerHTML += html;
             }
-            ,
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "tokenId",
-                        "type": "uint256",
-                    }
-                    ,
-                ],
-                "name": "tokenURI",
-                "outputs": [
-                    {
-                        "internalType": "string",
-                        "name": "",
-                        "type": "string",
-                    }
-                    ,
-                ],
-                "stateMutability": "view",
-                "type": "function",
-            }
-            ,
-            {
-                "constant": true,
-                "inputs": [],
-                "name": "decimals",
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint8"
-                    }
-                ],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
-            }
+        }
+
+        async function buyProduct (productId) {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
+            const product = await marketplace.methods.products(productId).call();
+            marketplace.methods.buyProduct(productId).send({ from: account, value: product.price })
+                .then(function (receipt) {
+                    console.log('Покупка совершена:', receipt);
+                });
+        }
+
+        // Получение значения параметра 'refcode' из URL
+        function getRefCode () {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('refcode');
+        }
+
+        // Вызов функции и вывод результата
+        const refCode = getRefCode();
+        console.log(refCode);
+
+    </script>
+
+    <script>
+
+        // Инициализация и рендер галлереи
+        const nftData = [
+            { title: "NFT 1", imageUrl: "https://via.placeholder.com/150", address: "address", id: "unit1234", seller: "address", chainid: "chain name", type: "ETH", price: "unit1234" },
+            { title: "NFT 2", imageUrl: "https://via.placeholder.com/150", address: "address", id: "unit1234", seller: "address", chainid: "chain name", type: "ETH", price: "unit1234" },
+            { title: "NFT 3", imageUrl: "https://via.placeholder.com/150", address: "address", id: "unit1234", seller: "address", chainid: "chain name", type: "ETH", price: "unit1234" },
+            { title: "NFT 4", imageUrl: "https://via.placeholder.com/150", address: "address", id: "unit1234", seller: "address", chainid: "chain name", type: "ETH", price: "unit1234" }
         ];
-        let coinAddress;
-        let totalDuration;
-        let decimal;
-        let coinKind;
-        async function getContractInf () {
-            //nft address
-            const provider = new ethers.providers.Web3Provider(this.parent.ethereum);
-            const signer = provider.getSigner();
-            const network = await provider.getNetwork();
-            document.getElementById("chain-id").innerHTML = network.chainId;
-            const nftAddress = document.getElementById("form-output-nft-0").innerHTML;
-            //nft id
-            const val1 = JSON.parse(
-                document.getElementById("form-output-nftId-0").innerHTML
-            );
-            const nftId = ethers.utils.formatUnits(val1, 0);
-            document.getElementById("form-output-nftId-0").innerHTML = nftId;
-            //coin data
-            coinAddress = document.getElementById("form-output-coin-0").innerHTML;
-            coinKind = coinAddress == "0x0000000000000000000000000000000000000000" ? 0 : 1;
-            console.log("coin address : " + coinAddress);
-            if (coinKind == 0) {
-                document.getElementById("coin-symbol").innerHTML = "Chain Currency";
-                decimal = 18;
-            }
-            else {
-                const coinContract = new ethers.Contract(coinAddress, abi, signer);
-                const coinName = await coinContract.name();
-                const symbol = await coinContract.symbol();
-                decimal = await coinContract.decimals();
-                document.getElementById("coin-symbol").innerHTML = coinName;
-            }
-            //auction duration
-            const val2 = JSON.parse(
-                document.getElementById("form-output-duration-0").innerHTML
-            );
-            totalDuration = ethers.utils.formatUnits(val2, 0);
-            document.getElementById("form-output-duration-0").innerHTML = totalDuration / 3600 + 'h';
-            //display NFT collection name
-            const nftContract = new ethers.Contract(nftAddress, abi, signer);
-            const nftCollectionName = await nftContract.name();
-            document.getElementById("nft-collection").innerHTML = nftCollectionName;
-            //display NFT image
-            const tokenURI = await nftContract.tokenURI(nftId);
-            const response = await fetch(tokenURI);
-            const data = await response.json();
-            const imageUrl = data.image;
-            console.log("nft image url" + imageUrl);
-            const imageElement = document.getElementById("nft-image");
-            imageElement.src = imageUrl;
-            //display buy button
-            const content = coinKind == 0 ? `
-  <input
-  id="form-input-buyWithNative-payable"
-  type="text"
-  placeholder="Enter the price"
-  data-form-name="buyWithNative"
-  data-field-type="uint256"
-  class="input-data h-item"/>
-  <input
-  id="input-native"
-  type="text"
-  placeholder="Enter the price"
-  class="input-data w-input " style="color:#fff; border:1px solid rgb(255, 255, 255, 0.3); padding:8px; border-radius:8px; background-color:rgba(255, 255, 255, 0.05);"/>
-  <button id="btn-buyNative"
-  type="button"
-  data-form-name="buyWithNative"
-  class="btn" style="color:#fff; width:150px; background-color:#3e6eca;">
-  Buy Now
-      </button>`
-                : `
-  <input
-  id="form-input-buyWithNormal-amount"
-  type="text"
-  placeholder="Enter the price"
-  data-form-name="buyWithNormal"
-  data-field-type="uint256"
-  class="input-data h-item" />
-  <input
-  id="input-normal"
-  type="text"
-  placeholder="Enter the price"
-  class="input-data w-input" style="color:#fff; border:1px solid rgb(255, 255, 255, 0.3); padding:8px; border-radius:8px; background-color:rgba(255, 255, 255, 0.05);"/>
-  <button
-  id="btn-buyNormal"
-  type="button"
-  onclick="approveCoin()"
-  class="btn" style="color:#fff; width:150px; background-color:#3e6eca;">
-  Buy Now
-      </button>
-  <button
-  id="buy-stable"
-  type="button"
-  data-form-name="buyWithNormal"
-  class="h-item" style="color:#fff; width:200px; background-color:#3e6eca;">
-  BUY</button>`;
-            document.getElementById("btn-group").innerHTML = content;
-            if (coinKind == 0) {
-                //add cheage handle event on input tag
-                const inputElement = document.getElementById('input-native');
-                // Add a change event listener
-                inputElement.addEventListener('change', function (event) {
-                    // Handle the change event here
-                    document.getElementById("form-input-buyWithNative-payable").value = ethers.utils.parseUnits(inputElement.value, decimal);
-                    // Perform additional actions based on the input value
-                }
-                );
-                const btnElement = document.getElementById('btn-buyNative');
-                // Add a change event listener
-                btnElement.addEventListener('click', function (event) {
-                    // Handle the change event here
-                    document.getElementById("btn-buyNative").innerHTML = `<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"> </span><span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"> </span><span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"> </span>`;
-                    // Perform additional actions based on the input value
-                }
-                );
-            }
-            else {
-                const inputElement = document.getElementById('input-normal');
-                // Add a change event listener
-                inputElement.addEventListener('change', function (event) {
-                    // Handle the change event here
-                    document.getElementById("form-input-buyWithNormal-amount").value = ethers.utils.parseUnits(inputElement.value, decimal);
-                    // Perform additional actions based on the input value
-                }
-                );
-                const btnElement = document.getElementById('btn-buyNormal');
-                // Add a change event listener
-                btnElement.addEventListener('click', function (event) {
-                    // Handle the change event here
-                    document.getElementById("btn-buyNormal").innerHTML = `<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"> </span><span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"> </span><span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"> </span>`;
-                    // Perform additional actions based on the input value
-                }
-                );
-            }
+
+        // Function to render NFT cards
+        function renderGallery (nftArray) {
+            const galleryElement = document.getElementById("gallery");
+            galleryElement.innerHTML = "";
+            nftArray.forEach(nft => {
+                const card = `
+                    <div class="col" data-bs-toggle="modal" data-bs-target="#nftModal">
+                            <div class="card h-100">
+                                <p class="card-id" style="display: none">${nft.id}</p>
+                                <img src="${nft.imageUrl}" class="card-img-top" alt="NFT Image" />
+                                <div class="card-body">
+                                    <h5 class="card-title">${nft.title}</h5>
+                                    <p class="card-text">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                        eiusmod.
+                                    </p>
+                                    <button class="btn btn-primary btn-buy">Купить</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                galleryElement.innerHTML += card;
+            });
         }
-        function convertSecondsToHoursMinutes (totalSeconds) {
-            let hours = Math.floor(totalSeconds / 3600);
-            let minutes = Math.floor((totalSeconds % 3600) / 60);
-            return hours + 'h ' + minutes + 'm';
+
+        // Function to filter NFTs based on search input
+        function filterNFTs (query) {
+            const filteredNFTs = nftData.filter(nft => nft.title.toLowerCase().includes(query.toLowerCase()));
+            renderGallery(filteredNFTs);
         }
-        try {
-            setTimeout(() => {
-                getContractInf();
-            }
-                , 2000);
-        }
-        catch (e) {
-            console.log("error: ", e);
-        }
-        function updateProgressBar (percent) {
-            document.getElementById("progressbar").style.width = percent + "%";
-            document.getElementById("progressbar").setAttribute('aria-valuenow', percent);
-        }
-        try {
-            const intervalTime = setInterval(() => {
-                const element = document.getElementById("btn-progress");
-                if (element) {
-                    element.click();
-                    let value = JSON.parse(
-                        document.getElementById(
-                            "form-output-getRemainingTime-0"
-                        ).innerHTML
-                    );
-                    const leftTime = ethers.utils.formatUnits(value, 0);
-                    console.log("setting progress value: ", leftTime);
-                    const p = 100 - leftTime * 100 / totalDuration;
-                    document.getElementById("remaining-time").innerHTML = convertSecondsToHoursMinutes(leftTime);
-                    updateProgressBar(p);
-                }
-            }
-                , 2000);
-            const intervalPrice = setInterval(() => {
-                const element = document.getElementById("btn-price");
-                if (element) {
-                    element.click();
-                    let value = JSON.parse(
-                        document.getElementById("form-output-getPrice-0")
-                            .innerHTML
-                    );
-                    document.getElementById("current-price").innerHTML =
-                        ethers.utils.formatUnits(value, decimal);
-                }
-            }
-                , 2000);
-            const intervalOne = setInterval(() => {
-                const element = document.getElementById("btn-getApprovalState");
-                element.click();
-                const value = document.getElementById("form-output-isApproved-0").innerHTML;
-                if (value == "true") {
-                    const btn1 = document.getElementById("btn-buyNative");
-                    if (btn1) btn1.disabled = false;
-                    const btn2 = document.getElementById("btn-buyNormal");
-                    if (btn2) btn2.disabled = false;
-                    clearInterval(intervalOne);
-                }
-                else {
-                    const btn1 = document.getElementById("btn-buyNative");
-                    if (btn1) btn1.disabled = true;
-                    const btn2 = document.getElementById("btn-buyNormal");
-                    if (btn2) btn2.disabled = true;
-                }
-            }
-                , 2000);
-            const intervalTwo = setInterval(() => {
-                const element = document.getElementById("btn-getSoldState");
-                element.click();
-                const value = document.getElementById("form-output-isSold-0").innerHTML;
-                if (value == "true") {
-                    document.getElementById("holder").innerHTML = `<p class="h4 mt-5">The NFT is already sold!</p>`;
-                    clearInterval(intervalTwo);
-                    clearInterval(intervalPrice);
-                    clearInterval(intervalTime);
-                }
-            }
-                , 2000);
-            const intervalThree = setInterval(() => {
-                const element = document.getElementById("btn-getCancelingState");
-                element.click();
-                const value = document.getElementById("form-output-isCancelled-0").innerHTML;
-                if (value == "true") {
-                    document.getElementById("holder").innerHTML = `<p class="h4 mt-5">This Dutch Auction is cancelled by the NFT owner!</p>`;
-                    clearInterval(intervalThree);
-                    clearInterval(intervalPrice);
-                    clearInterval(intervalTime);
-                }
-            }
-                , 2000);
-        }
-        catch (e) {
-            console.log("Failed to fetch current price : ", e);
-        }
-        async function approveCoin () {
-            console.log("approve ERC20 button is clicked");
-            const abi = [
-                {
-                    inputs: [
-                        {
-                            internalType: "address",
-                            name: "spender",
-                            type: "address",
-                        }
-                        ,
-                        {
-                            internalType: "uint256",
-                            name: "amount",
-                            type: "uint256",
-                        }
-                        ,
-                    ],
-                    name: "approve",
-                    outputs: [
-                        {
-                            internalType: "bool",
-                            name: "",
-                            type: "bool",
-                        }
-                        ,
-                    ],
-                    stateMutability: "nonpayable",
-                    type: "function",
-                }
-                ,
-            ];
-            const provider = new ethers.providers.Web3Provider(this.parent.ethereum);
-            let signer = provider.getSigner();
-            const contract = new ethers.Contract(coinAddress, abi, signer);
-            const approvedAddress = document.getElementById(
-                "form-output-getAddress-0"
-            ).innerHTML;
-            console.log("auction contract address : " + approvedAddress);
-            const value = document.getElementById(
-                "form-input-buyWithNormal-amount"
-            ).value;
-            const amount = ethers.utils.parseUnits(value, 0);
-            console.log("token amount : " + amount);
-            // Call the approve function
-            const approveTx = await contract.approve(approvedAddress, amount);
-            await approveTx.wait();
-            console.log("successfully approved");
-            let element = document.getElementById("buy-stable");
-            element.click();
-        }
+
+        // Event listener for search input
+        document.getElementById("searchInput").addEventListener("change", function (event) {
+            filterNFTs(event.target.value);
+        });
+
+
+        // Initial rendering of gallery
+        if (!document.getElementById("gallery").textContent.trim()) renderGallery(nftData);
     </script>
+
     <script>
-        const nftImage = document.querySelector('#nft-image');
-        nftImage.addEventListener('click', (event) => {
-            event.preventDefault();
-            console.log(event.target);
-        })
+        // Отрисовка модального окна выбранной nft
+        console.log(document.querySelectorAll(".col").length, "Кол-во записей");
+
+        function renderModal (modal) {
+            oldModal = document.querySelector("#nftModal");
+            oldModal.innerHTML = modal;
+        }
+
+        Array.from(document.querySelectorAll(".col")).map(card => card.addEventListener('click', () => {
+            let cardId = card.querySelector(".card-id").textContent;
+            let cardTitle = card.querySelector(".card-title").textContent;
+            let selectedNft = nftData.filter(nft => nft.id == cardId && nft.title == cardTitle)[0];
+            console.log(selectedNft);
+
+            let modal = `
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <img src="https://via.placeholder.com/500x300" alt="NFT IMAGE">
+                        <div class="modal-body">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="nftModalLabel">${selectedNft.title}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="content-body">
+                                <div class="modal-item mb-3">
+                                    <div class="modal-subtitle">
+                                        NFT
+                                    </div>
+                                    <div class="modal-tags">
+                                        <div class="tag">
+                                            <p class="tag-title">Address</p>
+                                            <p class="tag-text">${selectedNft.address}</p>
+                                        </div>
+                                        <div class="tag">
+                                            <p class="tag-title">ID</p>
+                                            <p class="tag-text">${selectedNft.id}</p>
+                                        </div>
+                                        <div class="tag">
+                                            <p class="tag-title">Seller</p>
+                                            <p class="tag-text">${selectedNft.seller}</p>
+                                        </div>
+                                        <div class="tag">
+                                            <p class="tag-title">ChainID</p>
+                                            <p class="tag-text">${selectedNft.chainid}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-item mb-3">
+                                    <div class="modal-subtitle">
+                                        Buy details
+                                    </div>
+                                    <div class="modal-tags">
+                                        <div class="tag">
+                                            <p class="tag-title">Type</p>
+                                            <p class="tag-text">${selectedNft.type}</p>
+                                        </div>
+                                        <div class="tag">
+                                            <p class="tag-title">Price</p>
+                                            <p class="tag-text">${selectedNft.price}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-item mb-3">
+                                    <div class="modal-subtitle">
+                                        Buy details
+                                    </div>
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing
+                                        elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                                        laboris nisi ut aliquip ex ea commodo consequat.
+                                    </p>
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary btn-buy">Купить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            renderModal(modal);
+        }));
     </script>
+<<<<<<< HEAD
     <!-- Коммент -->
 </body>
+=======
+
+    <script>
+        //Авторизация
+
+        // Активация кнопки авторизации
+        const loginInput = document.querySelector("#loginInput");
+        const loginButton = document.querySelector(".btn-login");
+        loginInput.addEventListener('input', (event) => {
+            let inputError = document.querySelector('.input-error');
+
+            if (!!event.target.value) {
+                loginButton.disabled = false;
+
+                if (!Number(event.target.value)) {
+                    loginInput.classList.add('error');
+                    inputError.style.display = 'block';
+                    inputError.textContent = 'Неверный формат номера. Номер должен содержать цифры';
+                }
+
+                else {
+                    loginInput.classList.remove('error');
+                    inputError.style.display = 'none';
+                    inputError.textContent = '';
+                }
+            }
+            else {
+                loginButton.disabled = true;
+                loginInput.classList.remove('error');
+                inputError.style.display = 'none';
+                inputError.textContent = '';
+            }
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>;
+>>>>>>> a88853c6997e12797d7ffdf98704a962828a6089
